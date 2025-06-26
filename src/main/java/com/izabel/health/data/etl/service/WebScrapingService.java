@@ -1,7 +1,7 @@
 package com.izabel.health.data.etl.service;
 
 import com.izabel.health.data.etl.model.Value;
-import com.izabel.health.data.etl.repository.ValorRepository;
+import com.izabel.health.data.etl.loader.ValorRepository;
 import lombok.AllArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
