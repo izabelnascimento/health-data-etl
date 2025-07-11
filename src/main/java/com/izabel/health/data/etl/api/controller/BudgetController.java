@@ -2,11 +2,9 @@ package com.izabel.health.data.etl.api.controller;
 
 import com.izabel.health.data.etl.api.service.BudgetService;
 import com.izabel.health.data.etl.dto.BudgetResponseDTO;
+import com.izabel.health.data.etl.dto.CityYearValueDTO;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,5 +19,11 @@ public class BudgetController {
     public List<BudgetResponseDTO> collectBudgetData(@RequestParam Long year) {
         return budgetService.getBudgetByYear(year);
     }
+
+    @GetMapping("/summary-by-city")
+    public List<CityYearValueDTO> getSummaryByCity(@RequestParam Long cityId) {
+        return budgetService.getAnnualSumByCity(cityId);
+    }
+
 
 }
