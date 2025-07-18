@@ -4,7 +4,6 @@ import com.izabel.health.data.etl.dto.BudgetDTO;
 import com.izabel.health.data.etl.source.Siops;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
