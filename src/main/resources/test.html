@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gráfico de Valores por Cidade (2022)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        canvas {
+            max-width: 1000px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+<h2 style="text-align: center;">Valores por Cidade - 2022</h2>
+<canvas id="cityChart"></canvas>
+
+<script>
+    async function fetchDataAndRenderChart() {
+        try {
+            const response = await fetch('http://localhost:8080/api/budget/city?year=2022', {
+                method: 'POST',
+                headers: {
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json'
+                },
+                body: null
+            });
+
+            const data = await response.json();
+
+            // Ordena do maior para o menor valor (opcional)
+            data.sort((a, b) => b.value - a.value);
+
+            // Se quiser limitar a exibição (ex: top 10)
+            const topData = data.slice(0, 10);
+
+            const labels = topData.map(item => item.city.name);
+            const values = topData.map(item => item.value);
+
+            const ctx = document.getElementById('cityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Valor por Cidade (R$)',
+                        data: values,
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let value = context.parsed.y;
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Erro ao buscar dados:', error);
+        }
+    }
+
+    fetchDataAndRenderChart();
+</script>
+</body>
+</html>
