@@ -1,7 +1,5 @@
 package com.izabel.health.data.etl.extractor;
 
-import com.izabel.health.data.etl.source.Siops;
-import com.izabel.health.data.etl.source.Sisab;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
@@ -12,8 +10,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -22,13 +18,13 @@ import static com.izabel.health.data.etl.source.Sisab.*;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class HealthCareVisitExtractor extends Siops {
+public class HealthCareVisitExtractor {
 
     public void batchExtract() throws IOException {
         log.info("Iniciando extração de dados");
-        for (Long year: Sisab.YEARS) {
+        for (Long year : YEARS) {
             log.info("Extração do ano: {}", year);
-            for (Long production : Sisab.PRODUCTION) {
+            for (Long production : PRODUCTION) {
                 extract(getDateCodes(year), production, year);
             }
         }
@@ -105,10 +101,7 @@ public class HealthCareVisitExtractor extends Siops {
             if (!dir.exists()) {
                 dir.mkdirs();
             }
-
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            File file = new File(dir, year + "_production_" + production + "_" + timestamp + ".csv");
-
+            File file = new File(dir, year + "_production_" + production + ".csv");
             try (FileWriter writer = new FileWriter(file)) {
                 writer.write(html);
                 log.info("Arquivo salvo em: {}", file.getAbsolutePath());
