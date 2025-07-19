@@ -6,6 +6,7 @@ import com.izabel.health.data.etl.loader.CityRepository;
 import com.izabel.health.data.etl.model.Budget;
 import com.izabel.health.data.etl.loader.BudgetRepository;
 import com.izabel.health.data.etl.model.City;
+import com.izabel.health.data.etl.source.Siops;
 import com.izabel.health.data.etl.transformer.BudgetTransformation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class BudgetETLService {
+public class BudgetETLService extends Siops{
 
     private final BudgetRepository loading;
     private final BudgetExtractor extractor;
@@ -53,12 +54,10 @@ public class BudgetETLService {
     public int fetchAndSaveCitiesBudget() {
         var cities = cityRepository.findAll();
         List<Budget> budgets = new ArrayList<>();
-        List<Long> bimesters = List.of(12L, 14L, 1L, 18L, 20L, 2L);
 
-        for(int i=0; i<5; i++) {
-            var year = 2020L + i;
+        for(Long year: YEARS) {
             log.info("Iniciando extração de dados do ano: {}", year);
-            for (Long bimonthly : bimesters) {
+            for (Long bimonthly : BIMESTERS) {
                 log.info("Iniciando extração de dados do bimestre: {}", bimonthly);
                 for (City city : cities) {
                     Long cityId = city.getId();
