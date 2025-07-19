@@ -35,11 +35,7 @@ public class HealthCareVisitExtractor extends Siops {
         log.info("Extração de dados finalizada com sucesso");
     }
 
-    private void extract(
-            List<String> dateCodes,
-            Long production,
-            Long year
-    ) throws IOException {
+    public void extract(List<String> dateCodes, Long production, Long year) throws IOException {
         Connection.Response initialResponse = Jsoup.connect(BASE_URL)
                 .method(Connection.Method.GET)
                 .timeout(TIMEOUT)
@@ -82,7 +78,7 @@ public class HealthCareVisitExtractor extends Siops {
         request.data("unidGeo", "estado");
 
         for (String estado : STATES) {
-            request.data("states", estado);
+            request.data("estados", estado);
         }
 
         for (String comp : dateCodes) {
@@ -93,7 +89,7 @@ public class HealthCareVisitExtractor extends Siops {
         request.data("selectcoluna", "NU_COMPETENCIA");
         request.data("idadeInicio", "0");
         request.data("idadeFim", "0");
-        request.data("production", production.toString());
+        request.data("tpProducao", production.toString());
         request.data("javax.faces.ViewState", updatedViewState);
         request.data("j_idt192", "j_idt192");
 
