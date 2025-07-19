@@ -3,6 +3,7 @@ package com.izabel.health.data.etl.transformer;
 import com.izabel.health.data.etl.dto.BudgetDTO;
 import com.izabel.health.data.etl.model.Budget;
 import com.izabel.health.data.etl.model.City;
+import com.izabel.health.data.etl.model.HealthCareVisit;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,10 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class HealthCareVisitTransformation {
+
+    public List<HealthCareVisit> batchTransformation(){
+        return List.of();
+    }
 
     public Budget transform(List<BudgetDTO> rawList) {
         Budget budget = new Budget();

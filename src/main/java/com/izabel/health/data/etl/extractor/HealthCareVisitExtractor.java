@@ -1,7 +1,5 @@
 package com.izabel.health.data.etl.extractor;
 
-import com.izabel.health.data.etl.source.Siops;
-import com.izabel.health.data.etl.source.Sisab;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
@@ -22,13 +20,13 @@ import static com.izabel.health.data.etl.source.Sisab.*;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class HealthCareVisitExtractor extends Siops {
+public class HealthCareVisitExtractor {
 
     public void batchExtract() throws IOException {
         log.info("Iniciando extração de dados");
-        for (Long year: Sisab.YEARS) {
+        for (Long year : YEARS) {
             log.info("Extração do ano: {}", year);
-            for (Long production : Sisab.PRODUCTION) {
+            for (Long production : PRODUCTION) {
                 extract(getDateCodes(year), production, year);
             }
         }

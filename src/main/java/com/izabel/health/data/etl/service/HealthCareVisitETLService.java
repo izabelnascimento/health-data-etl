@@ -2,12 +2,14 @@ package com.izabel.health.data.etl.service;
 
 import com.izabel.health.data.etl.extractor.HealthCareVisitExtractor;
 import com.izabel.health.data.etl.loader.HealthCareVisitRepository;
+import com.izabel.health.data.etl.model.HealthCareVisit;
 import com.izabel.health.data.etl.transformer.HealthCareVisitTransformation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,11 +20,10 @@ public class HealthCareVisitETLService {
     private final HealthCareVisitExtractor extractor;
     private final HealthCareVisitTransformation transformation;
 
-    public String fetchAndSaveCitiesBudget() throws IOException {
+    public int fetchAndSaveCitiesBudget() throws IOException {
         extractor.batchExtract();
-        return "ok";
-//        healthCareVisits.add(transformation.transform(response, cityId, 26L, year, bimonthly));
-//        return loading.saveAll(healthCareVisits).size();
+        List<HealthCareVisit> healthCareVisits = transformation.batchTransformation();
+        return loading.saveAll(healthCareVisits).size();
     }
 
 }
