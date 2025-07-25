@@ -1,15 +1,25 @@
 package com.izabel.health.data.etl.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Setter;
 
 @Entity
+@Setter
 public class HealthCareVisit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Double value;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id", nullable = false)
+    private City city;
+
+    private Long year;
+    private Long month;
+
+    private Long individualVisit;
+    private Long dentistVisit;
+    private Long procedure;
+    private Long homeVisit;
 }
