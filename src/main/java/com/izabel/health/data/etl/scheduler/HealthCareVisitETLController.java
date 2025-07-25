@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/health-care-visit")
+@RequestMapping("/etl/health-care-visit")
 @AllArgsConstructor
 public class HealthCareVisitETLController {
 

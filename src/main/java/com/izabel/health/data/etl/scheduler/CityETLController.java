@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/city")
+@RequestMapping("/etl/city")
 @AllArgsConstructor
 public class CityETLController {
 
@@ -15,7 +15,7 @@ public class CityETLController {
 
     private final CityETLService cityETLService;
 
-    @GetMapping("/cities-pe")
+    @GetMapping
     public int collectCitiesData() {
         return cityETLService.fetchAndSaveCities();
     }

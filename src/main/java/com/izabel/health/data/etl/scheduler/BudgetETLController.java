@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/budget")
+@RequestMapping("/etl/budget")
 @AllArgsConstructor
 public class BudgetETLController {
 
@@ -16,7 +16,7 @@ public class BudgetETLController {
 
     private final BudgetETLService budgetETLService;
 
-    @PostMapping("/budget")
+    @PostMapping
     public Budget collectBudgetData() {
         return budgetETLService.fetchAndSaveBudget();
     }
