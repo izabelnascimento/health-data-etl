@@ -1,10 +1,10 @@
 package com.izabel.health.data.etl.model;
 
 import jakarta.persistence.*;
-import lombok.Setter;
+import lombok.Data;
 
 @Entity
-@Setter
+@Data
 public class HealthCareVisit {
 
     @Id
