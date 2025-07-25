@@ -25,5 +25,4 @@ public class BudgetController {
         return budgetService.getAnnualSumByCity(cityId);
     }
 
-
 }
