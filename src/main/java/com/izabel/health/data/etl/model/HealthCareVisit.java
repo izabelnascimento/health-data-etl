@@ -22,4 +22,8 @@ public class HealthCareVisit {
     private Long dentistVisit;
     private Long procedure;
     private Long homeVisit;
+
+    public Long getVisits(){
+        return individualVisit + dentistVisit + procedure + homeVisit;
+    }
 }

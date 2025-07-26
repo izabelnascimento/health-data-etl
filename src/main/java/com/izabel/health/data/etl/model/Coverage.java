@@ -28,4 +28,8 @@ public class Coverage {
     private Long coverageNumber;
     private Long teams;
     private Double coveragePercent;
+
+    public Double getTeamsDensity(){
+        return (double) 100000 * teams / population;
+    }
 }
