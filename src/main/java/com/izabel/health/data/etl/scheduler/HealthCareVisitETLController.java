@@ -18,8 +18,8 @@ public class HealthCareVisitETLController {
     private final HealthCareVisitETLService healthCareVisitETLService;
 
     @PostMapping("/collect")
-    public Long collectPECitiesBudgetData() throws IOException {
-        return healthCareVisitETLService.fetchAndSaveCitiesBudget();
+    public Long collectPECitiesHealthCareVisitData() throws IOException {
+        return healthCareVisitETLService.collectPECitiesHealthCareVisitData();
     }
 }
 

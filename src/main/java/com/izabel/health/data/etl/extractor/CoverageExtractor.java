@@ -16,14 +16,14 @@ import static com.izabel.health.data.etl.source.EGestor.*;
 @Slf4j
 public class CoverageExtractor {
 
-    public List<CoverageDTO> extract() {
+    public List<CoverageDTO> extract(Long cityId) {
         return WEB_CLIENT.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/cobertura/aps")
                         .queryParam("unidadeGeografica", "MUNICIPIO")
                         .queryParam("coRegiao", NORTHEAST_ID)
                         .queryParam("coUf", PE_ID)
-                        .queryParam("coMunicipio", 260005)
+                        .queryParam("coMunicipio", cityId)
                         .queryParam("nuCompInicio", START)
                         .queryParam("nuCompFim", END)
                         .build()

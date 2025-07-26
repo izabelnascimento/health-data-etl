@@ -1,13 +1,10 @@
 package com.izabel.health.data.etl.scheduler;
 
-import com.izabel.health.data.etl.dto.CoverageDTO;
 import com.izabel.health.data.etl.service.CoverageETLService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/etl/coverage")
@@ -19,8 +16,8 @@ public class CoverageETLController {
     private final CoverageETLService coverageETLService;
 
     @PostMapping("/collect")
-    public List<CoverageDTO> collectPECitiesBudgetData() {
-        return coverageETLService.fetchAndSaveCitiesBudget();
+    public int collectPECitiesCoverageData() {
+        return coverageETLService.collectPECitiesCoverageData();
     }
 }
 
