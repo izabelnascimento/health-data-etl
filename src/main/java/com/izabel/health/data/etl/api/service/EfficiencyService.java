@@ -80,4 +80,24 @@ public class EfficiencyService {
                 coverageNumber == 0 ? 0.0 : (double) productivity / coverageNumber
         ));
     }
+
+    public RankedEfficiencyCityDTO getTopAndBottomEfficientCities(Long year) {
+        List<EfficiencyCityDTO> allCities = efficiency(year);
+
+        List<EfficiencyCityDTO> sorted = allCities.stream()
+                .peek(dto -> {
+                    double avgEfficiency = dto.getEfficiencies().stream()
+                            .mapToDouble(EfficiencyDTO::getEfficiency)
+                            .average().orElse(0.0);
+                    dto.setAvgEfficiency(avgEfficiency);
+                })
+                .sorted(Comparator.comparingDouble(EfficiencyCityDTO::getAvgEfficiency))
+                .toList();
+
+        return new RankedEfficiencyCityDTO(
+                sorted.subList(0, Math.min(5, sorted.size())),
+                sorted.subList(Math.max(0, sorted.size() - 5), sorted.size())
+        );
+    }
+
 }
