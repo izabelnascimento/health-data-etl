@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AggregationDTO {
+public class EfficiencyDTO {
     private Long month;
     private Double teamDensity;
     private Long coverage;
