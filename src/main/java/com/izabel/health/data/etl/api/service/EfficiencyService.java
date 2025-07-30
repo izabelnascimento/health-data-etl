@@ -95,8 +95,8 @@ public class EfficiencyService {
                 .toList();
 
         return new RankedEfficiencyCityDTO(
-                sorted.subList(0, Math.min(5, sorted.size())),
-                sorted.subList(Math.max(0, sorted.size() - 5), sorted.size())
+                sorted.subList(Math.max(0, sorted.size() - 5), sorted.size()),
+                sorted.subList(0, Math.min(5, sorted.size()))
         );
     }
 

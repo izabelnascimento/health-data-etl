@@ -25,7 +25,7 @@ public class EfficiencyController {
         return efficiencyService.efficiency(year);
     }
 
-    @GetMapping("/top-bottom/{year}")
+    @GetMapping("/ranked/{year}")
     public RankedEfficiencyCityDTO getTopAndBottomCities(@PathVariable Long year) {
         return efficiencyService.getTopAndBottomEfficientCities(year);
     }
