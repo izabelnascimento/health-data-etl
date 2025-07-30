@@ -1,13 +1,13 @@
 package com.izabel.health.data.etl.api.service;
 
-import com.izabel.health.data.etl.dto.CityYearAggregationDTO;
-import com.izabel.health.data.etl.dto.CityYearValueDTO;
-import com.izabel.health.data.etl.dto.HealthCareVisitAggregationDTO;
-import com.izabel.health.data.etl.dto.HealthCareVisitResponseDTO;
-import com.izabel.health.data.etl.loader.CityRepository;
-import com.izabel.health.data.etl.loader.HealthCareVisitRepository;
-import com.izabel.health.data.etl.mapper.CityMapper;
-import com.izabel.health.data.etl.model.City;
+import com.izabel.health.data.etl.common.dto.CityYearAggregationDTO;
+import com.izabel.health.data.etl.common.dto.CityYearValueDTO;
+import com.izabel.health.data.etl.common.dto.HealthCareVisitAggregationDTO;
+import com.izabel.health.data.etl.common.dto.HealthCareVisitResponseDTO;
+import com.izabel.health.data.etl.common.loader.CityRepository;
+import com.izabel.health.data.etl.common.loader.HealthCareVisitRepository;
+import com.izabel.health.data.etl.common.mapper.CityMapper;
+import com.izabel.health.data.etl.common.model.City;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -1,10 +1,10 @@
 package com.izabel.health.data.etl.api.service;
 
-import com.izabel.health.data.etl.dto.BudgetResponseDTO;
-import com.izabel.health.data.etl.dto.CityResponseDTO;
-import com.izabel.health.data.etl.dto.CityYearValueDTO;
-import com.izabel.health.data.etl.loader.BudgetRepository;
-import com.izabel.health.data.etl.model.Budget;
+import com.izabel.health.data.etl.common.dto.BudgetResponseDTO;
+import com.izabel.health.data.etl.common.dto.CityResponseDTO;
+import com.izabel.health.data.etl.common.dto.CityYearValueDTO;
+import com.izabel.health.data.etl.common.loader.BudgetRepository;
+import com.izabel.health.data.etl.common.model.Budget;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

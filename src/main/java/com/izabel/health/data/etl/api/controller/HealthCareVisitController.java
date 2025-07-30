@@ -1,8 +1,8 @@
 package com.izabel.health.data.etl.api.controller;
 
 import com.izabel.health.data.etl.api.service.HealthCareVisitService;
-import com.izabel.health.data.etl.dto.CityYearValueDTO;
-import com.izabel.health.data.etl.dto.HealthCareVisitResponseDTO;
+import com.izabel.health.data.etl.common.dto.CityYearValueDTO;
+import com.izabel.health.data.etl.common.dto.HealthCareVisitResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
