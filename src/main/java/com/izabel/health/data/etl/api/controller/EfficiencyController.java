@@ -3,6 +3,7 @@ package com.izabel.health.data.etl.api.controller;
 import com.izabel.health.data.etl.api.service.EfficiencyService;
 import com.izabel.health.data.etl.common.dto.EfficiencyCityDTO;
 import com.izabel.health.data.etl.common.dto.RankedEfficiencyCityDTO;
+import com.izabel.health.data.etl.common.dto.RedistributedEfficiencyCityDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,5 +29,10 @@ public class EfficiencyController {
     @GetMapping("/ranked/{year}")
     public RankedEfficiencyCityDTO getTopAndBottomCities(@PathVariable Long year) {
         return efficiencyService.getTopAndBottomEfficientCities(year);
+    }
+
+    @PostMapping("/ranked/redistribute/{year}")
+    public RedistributedEfficiencyCityDTO redistributeResources(@PathVariable Long year) {
+        return efficiencyService.redistributeResources(year);
     }
 }

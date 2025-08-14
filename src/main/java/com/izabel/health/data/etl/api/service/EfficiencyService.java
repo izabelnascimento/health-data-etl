@@ -4,6 +4,7 @@ package com.izabel.health.data.etl.api.service;
 import com.izabel.health.data.etl.common.dto.EfficiencyCityDTO;
 import com.izabel.health.data.etl.common.dto.EfficiencyDTO;
 import com.izabel.health.data.etl.common.dto.RankedEfficiencyCityDTO;
+import com.izabel.health.data.etl.common.dto.RedistributedEfficiencyCityDTO;
 import com.izabel.health.data.etl.common.loader.CityRepository;
 import com.izabel.health.data.etl.common.loader.CoverageRepository;
 import com.izabel.health.data.etl.common.loader.HealthCareVisitRepository;
@@ -77,7 +78,7 @@ public class EfficiencyService {
                 coverageNumber,
                 coveragePercentage,
                 productivity,
-                coverageNumber == 0 ? 0.0 : (double) productivity / coverageNumber
+                calculateEfficiency(coverageNumber, productivity)
         ));
     }
 
@@ -85,12 +86,7 @@ public class EfficiencyService {
         List<EfficiencyCityDTO> allCities = efficiency(year);
 
         List<EfficiencyCityDTO> sorted = allCities.stream()
-                .peek(dto -> {
-                    double avgEfficiency = dto.getEfficiencies().stream()
-                            .mapToDouble(EfficiencyDTO::getEfficiency)
-                            .average().orElse(0.0);
-                    dto.setAvgEfficiency(avgEfficiency);
-                })
+                .peek(dto -> dto.setAvgEfficiency(averageEfficiency(dto.getEfficiencies())))
                 .sorted(Comparator.comparingDouble(EfficiencyCityDTO::getAvgEfficiency))
                 .toList();
 
@@ -98,6 +94,66 @@ public class EfficiencyService {
                 sorted.subList(Math.max(0, sorted.size() - 5), sorted.size()),
                 sorted.subList(0, Math.min(5, sorted.size()))
         );
+    }
+
+    public RedistributedEfficiencyCityDTO redistributeResources(Long year) {
+        RankedEfficiencyCityDTO real = getTopAndBottomEfficientCities(year);
+        RankedEfficiencyCityDTO redistributed = redistributeResources(real);
+        return new RedistributedEfficiencyCityDTO(
+                real,
+                redistributed
+        );
+    }
+
+    private RankedEfficiencyCityDTO redistributeResources(RankedEfficiencyCityDTO real) {
+        List<EfficiencyCityDTO> topAdjusted  = adjustGroup(real.getTop(),  0.90); // -10%
+        List<EfficiencyCityDTO> downAdjusted = adjustGroup(real.getDown(), 1.10); // +10%
+        return new RankedEfficiencyCityDTO(topAdjusted, downAdjusted);
+    }
+
+    private List<EfficiencyCityDTO> adjustGroup(List<EfficiencyCityDTO> cities, double factor) {
+        List<EfficiencyCityDTO> out = new ArrayList<>();
+        for (EfficiencyCityDTO cityDTO : cities) {
+            List<EfficiencyDTO> adjusted = cityDTO.getEfficiencies().stream()
+                    .map(eff -> applyFactor(eff, factor))
+                    .toList();
+
+            EfficiencyCityDTO adjustedCity = new EfficiencyCityDTO(
+                    cityDTO.getCity(),
+                    adjusted,
+                    averageEfficiency(adjusted)
+            );
+            out.add(adjustedCity);
+        }
+        return out;
+    }
+
+    private EfficiencyDTO applyFactor(EfficiencyDTO eff, double factor) {
+        long oldCoverage   = eff.getCoverage() == null ? 0L : eff.getCoverage();
+        long newCoverage   = Math.max(1L, Math.round(oldCoverage * factor));
+        double newCovPct   = (eff.getCoveragePercentage() == null ? 0.0 : eff.getCoveragePercentage()) * factor;
+        long productivity  = eff.getProductivity() == null ? 0L : eff.getProductivity();
+
+//        TODO
+//        double newEfficiency = calculateEfficiency(newCoverage, productivity);
+        double newEfficiency = eff.getEfficiency() * factor;
+
+        return new EfficiencyDTO(
+                eff.getMonth(),
+                eff.getTeamDensity(),
+                newCoverage,
+                newCovPct,
+                productivity,
+                newEfficiency
+        );
+    }
+
+    private Double calculateEfficiency(Long coverageNumber, Long productivity) {
+        return coverageNumber == 0 ? 0.0 : (double) productivity / coverageNumber;
+    }
+
+    private double averageEfficiency(List<EfficiencyDTO> list) {
+        return list.stream().mapToDouble(EfficiencyDTO::getEfficiency).average().orElse(0.0);
     }
 
 }
