@@ -1,4 +1,4 @@
-package com.izabel.health.data.etl.api.service;
+package com.izabel.health.data.etl.etl.service;
 
 import com.izabel.health.data.etl.common.dto.BudgetDTO;
 import com.izabel.health.data.etl.etl.extractor.BudgetExtractor;

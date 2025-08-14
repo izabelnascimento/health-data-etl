@@ -1,7 +1,7 @@
 package com.izabel.health.data.etl.etl.controller;
 
 import com.izabel.health.data.etl.common.model.Budget;
-import com.izabel.health.data.etl.api.service.BudgetETLService;
+import com.izabel.health.data.etl.etl.service.BudgetETLService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

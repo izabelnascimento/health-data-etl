@@ -1,6 +1,6 @@
 package com.izabel.health.data.etl.etl.controller;
 
-import com.izabel.health.data.etl.api.service.CityETLService;
+import com.izabel.health.data.etl.etl.service.CityETLService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
