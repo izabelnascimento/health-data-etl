@@ -99,54 +99,93 @@ public class EfficiencyService {
     public RedistributedEfficiencyCityDTO redistributeResources(Long year) {
         RankedEfficiencyCityDTO real = getTopAndBottomEfficientCities(year);
         RankedEfficiencyCityDTO redistributed = redistributeResources(real);
-        return new RedistributedEfficiencyCityDTO(
-                real,
-                redistributed
-        );
+        return new RedistributedEfficiencyCityDTO(real, redistributed);
     }
 
     private RankedEfficiencyCityDTO redistributeResources(RankedEfficiencyCityDTO real) {
-        List<EfficiencyCityDTO> topAdjusted  = adjustGroup(real.getTop(),  0.90); // -10%
-        List<EfficiencyCityDTO> downAdjusted = adjustGroup(real.getDown(), 1.10); // +10%
+        final double CAP = 1.0;
+
+        Map<Integer, List<EfficiencyDTO>> topByMonth = groupByMonth(real.getTop());
+        Map<Integer, List<EfficiencyDTO>> downByMonth = groupByMonth(real.getDown());
+
+        Map<Integer, Double> monthSurplus = new HashMap<>();
+        Map<Integer, Double> monthDelta = new HashMap<>();
+
+        for (int m = 1; m <= 12; m++) {
+            List<EfficiencyDTO> topList = topByMonth.getOrDefault(m, List.of());
+            List<EfficiencyDTO> downList = downByMonth.getOrDefault(m, List.of());
+
+            double surplus = topList.stream()
+                    .mapToDouble(e -> Math.max(nullSafe(e.getEfficiency()) - CAP, 0.0))
+                    .sum();
+
+            double delta = (downList.isEmpty() ? 0.0 : surplus / downList.size());
+
+            monthSurplus.put(m, surplus);
+            monthDelta.put(m,   delta);
+        }
+
+        List<EfficiencyCityDTO> topAdjusted = real.getTop().stream()
+                .map(city -> new EfficiencyCityDTO(
+                        city.getCity(),
+                        city.getEfficiencies().stream()
+                                .map(e -> copyWithNewEfficiency(e, Math.min(nullSafe(e.getEfficiency()), CAP)))
+                                .toList(),
+                        averageEfficiency(
+                                city.getEfficiencies().stream()
+                                        .map(e -> copyWithNewEfficiency(e, Math.min(nullSafe(e.getEfficiency()), CAP)))
+                                        .toList())
+                ))
+                .toList();
+
+        List<EfficiencyCityDTO> downAdjusted = real.getDown().stream()
+                .map(city -> new EfficiencyCityDTO(
+                        city.getCity(),
+                        city.getEfficiencies().stream()
+                                .map(e -> {
+                                    double base = nullSafe(e.getEfficiency());
+                                    double delta = monthDelta.getOrDefault(e.getMonth().intValue(), 0.0);
+                                    return copyWithNewEfficiency(e, base + delta);
+                                })
+                                .toList(),
+                        averageEfficiency(
+                                city.getEfficiencies().stream()
+                                        .map(e -> {
+                                            double base = nullSafe(e.getEfficiency());
+                                            double delta = monthDelta.getOrDefault(e.getMonth().intValue(), 0.0);
+                                            return copyWithNewEfficiency(e, base + delta);
+                                        })
+                                        .toList())
+                ))
+                .toList();
+
         return new RankedEfficiencyCityDTO(topAdjusted, downAdjusted);
     }
 
-    private List<EfficiencyCityDTO> adjustGroup(List<EfficiencyCityDTO> cities, double factor) {
-        List<EfficiencyCityDTO> out = new ArrayList<>();
-        for (EfficiencyCityDTO cityDTO : cities) {
-            List<EfficiencyDTO> adjusted = cityDTO.getEfficiencies().stream()
-                    .map(eff -> applyFactor(eff, factor))
-                    .toList();
-
-            EfficiencyCityDTO adjustedCity = new EfficiencyCityDTO(
-                    cityDTO.getCity(),
-                    adjusted,
-                    averageEfficiency(adjusted)
-            );
-            out.add(adjustedCity);
+    private Map<Integer, List<EfficiencyDTO>> groupByMonth(List<EfficiencyCityDTO> cities) {
+        Map<Integer, List<EfficiencyDTO>> map = new HashMap<>();
+        for (EfficiencyCityDTO c : cities) {
+            for (EfficiencyDTO e : c.getEfficiencies()) {
+                if (e != null && e.getMonth() != null) {
+                    map.computeIfAbsent(e.getMonth().intValue(), k -> new ArrayList<>()).add(e);
+                }
+            }
         }
-        return out;
+        return map;
     }
 
-    private EfficiencyDTO applyFactor(EfficiencyDTO eff, double factor) {
-        long oldCoverage   = eff.getCoverage() == null ? 0L : eff.getCoverage();
-        long newCoverage   = Math.max(1L, Math.round(oldCoverage * factor));
-        double newCovPct   = (eff.getCoveragePercentage() == null ? 0.0 : eff.getCoveragePercentage()) * factor;
-        long productivity  = eff.getProductivity() == null ? 0L : eff.getProductivity();
-
-//        TODO
-//        double newEfficiency = calculateEfficiency(newCoverage, productivity);
-        double newEfficiency = eff.getEfficiency() * factor;
-
+    private EfficiencyDTO copyWithNewEfficiency(EfficiencyDTO src, double newEff) {
         return new EfficiencyDTO(
-                eff.getMonth(),
-                eff.getTeamDensity(),
-                newCoverage,
-                newCovPct,
-                productivity,
-                newEfficiency
+                src.getMonth(),
+                src.getTeamDensity(),
+                src.getCoverage(),
+                src.getCoveragePercentage(),
+                src.getProductivity(),
+                newEff
         );
     }
+
+    private double nullSafe(Double v) { return v == null ? 0.0 : v; }
 
     private Double calculateEfficiency(Long coverageNumber, Long productivity) {
         return coverageNumber == 0 ? 0.0 : (double) productivity / coverageNumber;
