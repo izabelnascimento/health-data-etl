@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface DeaIndicatorRepository extends JpaRepository<DeaIndicator, Long> {
     List<DeaIndicator> findByYearAndBimonthly(Long year, Long bimonthly);
+
+    DeaIndicator findFirstByYearAndBimonthlyAndCity_Id(Long year, Long Bimonthly, Long cityId);
 }
