@@ -17,7 +17,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.izabel.health.data.etl.etl.source.Siops.BIMESTERS;
+import static com.izabel.health.data.etl.common.util.Util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -30,18 +30,14 @@ public class DeaIndicatorService {
     private final CityRepository cityRepository;
     private final ObjectMapper mapper;
 
-    public static final List<Long> YEARS = List.of(2021L, 2022L, 2023L, 2024L);
-    public static final List<Long> FIRST_BIMESTERS = List.of(12L, 14L, 1L);
-
-
     public Integer calculate() {
         List<DeaIndicator> deaIndicators = new ArrayList<>();
         List<City> cities = cityRepository.findAll();
-        for (Long year : YEARS){
+        for (Long year : COMMON_YEARS){
             log.info("Calculating data for DEA {}", year);
-            for (Long bimester : BIMESTERS) {
+            for (Long bimester : ALL_BIMESTERS_ID) {
                 for (City city : cities) {
-                    deaIndicators.add(calculate(year, bimester, city, (long) (BIMESTERS.indexOf(bimester) + 2)));
+                    deaIndicators.add(calculate(year, bimester, city, (long) (ALL_BIMESTERS_ID.indexOf(bimester) + 2)));
                 }
             }
         }
@@ -49,16 +45,24 @@ public class DeaIndicatorService {
         return deaIndicatorRepository.saveAll(deaIndicators).size();
     }
 
-    public List<DeaIndicatorDTO> deaGet(Long year, Long bimester) {
-        List<DeaIndicator> deaIndicators = deaIndicatorRepository.findByYearAndBimonthly(year, bimester);
+    public List<DeaIndicatorDTO> getIndicators(Long year) {
+        List<DeaIndicator> deaIndicators = new ArrayList<>();
+        for (Long bimonthly : FIRST_BIMESTERS_ID) {
+            deaIndicators.addAll(deaIndicatorRepository.findByYearAndBimonthly(year, bimonthly));
+        }
+        return DeaIndicatorMapper.toDeaDTOs(deaIndicators);
+    }
+
+    public List<DeaIndicatorDTO> getIndicators(Long year, Long bimonthly) {
+        List<DeaIndicator> deaIndicators = deaIndicatorRepository.findByYearAndBimonthly(year, bimonthly);
         return DeaIndicatorMapper.toDeaDTOs(deaIndicators);
     }
 
     @Transactional
     public Integer calculateEfficiency() {
-        for (Long year : YEARS) {
+        for (Long year : COMMON_YEARS) {
             log.info("Calculating efficiency with DEA {}", year);
-            for (Long bimester : FIRST_BIMESTERS) {
+            for (Long bimester : FIRST_BIMESTERS_ID) {
                 calculateEfficiency(year, bimester);
             }
         }
@@ -67,7 +71,7 @@ public class DeaIndicatorService {
     }
 
     private void calculateEfficiency(Long year, Long bimester) {
-        List<DeaIndicatorDTO> indicators = deaGet(year, bimester);
+        List<DeaIndicatorDTO> indicators = getIndicators(year, bimester);
         calculateEfficiency(indicators, year, bimester);
     }
 

@@ -14,18 +14,23 @@ public class DeaIndicatorController {
 
     private DeaIndicatorService deaIndicatorService;
 
-    @PostMapping
-    public Integer deaIndicator() {
+    @PostMapping("/calculate/indicators")
+    public Integer calculateIndicators() {
         return deaIndicatorService.calculate();
     }
 
-    @GetMapping("/get")
-    public List<DeaIndicatorDTO> deaGet(@RequestParam Long year, @RequestParam Long bimonthly) {
-        return deaIndicatorService.deaGet(year, bimonthly);
+    @GetMapping("/indicators/first-semester")
+    public List<DeaIndicatorDTO> getFirstSemesterIndicators(@RequestParam Long year) {
+        return deaIndicatorService.getIndicators(year);
     }
 
-    @PostMapping("/efficiency")
-    public Integer deaEfficiency() {
+    @GetMapping("/indicators")
+    public List<DeaIndicatorDTO> getIndicators(@RequestParam Long year, @RequestParam Long bimonthly) {
+        return deaIndicatorService.getIndicators(year, bimonthly);
+    }
+
+    @PostMapping("/calculate/efficiency")
+    public Integer calculateEfficiency() {
         return deaIndicatorService.calculateEfficiency();
     }
 }

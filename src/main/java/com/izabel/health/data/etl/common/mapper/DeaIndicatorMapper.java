@@ -7,16 +7,19 @@ import com.izabel.health.data.etl.common.model.DeaIndicator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.izabel.health.data.etl.common.util.Util.parseBimester;
+
 public class DeaIndicatorMapper {
     public static DeaIndicatorDTO toDeaDTO(DeaIndicator deaIndicator) {
         return DeaIndicatorDTO.builder()
                 .cityId(deaIndicator.getCity().getId())
-                .municipio(deaIndicator.getCity().getName())
-                .recursoAPSperCapita(deaIndicator.getApsPerCapita())
-                .densidadeEquipes(deaIndicator.getTeamsDensity())
-                .atendimentos1000(deaIndicator.getHealthCareVisitsPerThousandReais())
+                .cityName(deaIndicator.getCity().getName())
+                .bimonthly(parseBimester(deaIndicator.getBimonthly()))
+                .apsPerCapita(deaIndicator.getApsPerCapita())
+                .teamsDensity(deaIndicator.getTeamsDensity())
+                .healthCareVisitsPerThousandReais(deaIndicator.getHealthCareVisitsPerThousandReais())
                 .cobertura(deaIndicator.getCoveragePercent())
-                .produtividade(deaIndicator.getProductivity())
+                .productivity(deaIndicator.getProductivity())
                 .build();
     }
 

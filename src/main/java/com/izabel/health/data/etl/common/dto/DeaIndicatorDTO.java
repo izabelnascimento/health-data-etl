@@ -5,10 +5,11 @@ import lombok.Builder;
 @Builder
 public record DeaIndicatorDTO(
         Long cityId,
-        String municipio,
-        double recursoAPSperCapita,
-        double densidadeEquipes,
-        double atendimentos1000,
+        String cityName,
+        Long bimonthly,
+        double apsPerCapita,
+        double teamsDensity,
+        double healthCareVisitsPerThousandReais,
         double cobertura,
-        double produtividade
+        double productivity
 ) {}
