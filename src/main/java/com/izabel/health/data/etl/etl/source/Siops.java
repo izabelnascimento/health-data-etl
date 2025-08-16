@@ -10,5 +10,5 @@ public class Siops {
             .baseUrl("https://siops-consulta-publica-api.saude.gov.br/v1")
             .build();
     public final List<Long> YEARS = List.of(2020L, 2021L, 2022L, 2023L, 2024L);
-    public final List<Long> BIMESTERS = List.of(12L, 14L, 1L, 18L, 20L, 2L);
+    public static final List<Long> BIMESTERS = List.of(12L, 14L, 1L, 18L, 20L, 2L);
 }

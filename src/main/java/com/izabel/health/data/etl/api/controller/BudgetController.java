@@ -25,4 +25,9 @@ public class BudgetController {
         return budgetService.getAnnualSumByCity(cityId);
     }
 
+    @PostMapping("/calculate-monthly-value")
+    private void calculateMonthlyValue() {
+        budgetService.updateMonthlyValues();
+    }
+
 }

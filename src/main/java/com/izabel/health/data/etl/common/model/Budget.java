@@ -25,4 +25,6 @@ public class Budget {
 
     private Double currentValue;
     private Double capitalValue;
+
+    private Double bimonthlyBudget;
 }
