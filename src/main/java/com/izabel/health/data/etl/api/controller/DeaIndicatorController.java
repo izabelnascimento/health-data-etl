@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dea")
+@RequestMapping("/api/dea")
 @AllArgsConstructor
 public class DeaIndicatorController {
 
@@ -22,6 +22,11 @@ public class DeaIndicatorController {
     @GetMapping("/indicators/first-semester")
     public List<DeaIndicatorDTO> getFirstSemesterIndicators(@RequestParam Long year) {
         return deaIndicatorService.getIndicators(year);
+    }
+
+    @GetMapping("/indicators/first-semester/ranked")
+    public List<DeaIndicatorDTO> getFirstSemesterIndicatorsRanked(@RequestParam Long year) {
+        return deaIndicatorService.getTopAndBottomIndicators(year);
     }
 
     @GetMapping("/indicators")

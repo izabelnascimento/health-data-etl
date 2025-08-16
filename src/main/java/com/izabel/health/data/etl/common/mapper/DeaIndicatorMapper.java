@@ -20,6 +20,7 @@ public class DeaIndicatorMapper {
                 .healthCareVisitsPerThousandReais(deaIndicator.getHealthCareVisitsPerThousandReais())
                 .cobertura(deaIndicator.getCoveragePercent())
                 .productivity(deaIndicator.getProductivity())
+                .efficiency(deaIndicator.getEfficiency())
                 .build();
     }
 

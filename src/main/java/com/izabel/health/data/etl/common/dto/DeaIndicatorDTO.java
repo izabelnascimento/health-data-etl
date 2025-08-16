@@ -11,5 +11,6 @@ public record DeaIndicatorDTO(
         double teamsDensity,
         double healthCareVisitsPerThousandReais,
         double cobertura,
-        double productivity
+        double productivity,
+        double efficiency
 ) {}

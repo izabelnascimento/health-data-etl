@@ -14,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.izabel.health.data.etl.common.util.Util.*;
 
@@ -46,11 +46,39 @@ public class DeaIndicatorService {
     }
 
     public List<DeaIndicatorDTO> getIndicators(Long year) {
-        List<DeaIndicator> deaIndicators = new ArrayList<>();
-        for (Long bimonthly : FIRST_BIMESTERS_ID) {
-            deaIndicators.addAll(deaIndicatorRepository.findByYearAndBimonthly(year, bimonthly));
-        }
-        return DeaIndicatorMapper.toDeaDTOs(deaIndicators);
+        return DeaIndicatorMapper.toDeaDTOs(findIndicators(year));
+    }
+
+    public List<DeaIndicatorDTO> getTopAndBottomIndicators(Long year) {
+        List<DeaIndicator> deaIndicators = findIndicators(year);
+
+        Map<Long, Double> avgEfficiencyByCity = deaIndicators.stream()
+                .collect(Collectors.groupingBy(
+                        d -> d.getCity().getId(),
+                        Collectors.averagingDouble(DeaIndicator::getEfficiency)
+                ));
+
+        List<Long> bestCities = avgEfficiencyByCity.entrySet().stream()
+                .sorted(Map.Entry.<Long, Double>comparingByValue().reversed())
+                .limit(5)
+                .map(Map.Entry::getKey)
+                .toList();
+
+        List<Long> worstCities = avgEfficiencyByCity.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .limit(5)
+                .map(Map.Entry::getKey)
+                .toList();
+
+        Set<Long> selectedCities = new HashSet<>();
+        selectedCities.addAll(bestCities);
+        selectedCities.addAll(worstCities);
+
+        List<DeaIndicator> filtered = deaIndicators.stream()
+                .filter(d -> selectedCities.contains(d.getCity().getId()))
+                .toList();
+
+        return DeaIndicatorMapper.toDeaDTOs(filtered);
     }
 
     public List<DeaIndicatorDTO> getIndicators(Long year, Long bimonthly) {
@@ -146,6 +174,14 @@ public class DeaIndicatorService {
                 .totalHealthCareVisits(visits)
                 .teamsCount(teams)
                 .build();
+    }
+
+    private List<DeaIndicator> findIndicators(Long year){
+        List<DeaIndicator> deaIndicators = new ArrayList<>();
+        for (Long bimonthly : FIRST_BIMESTERS_ID) {
+            deaIndicators.addAll(deaIndicatorRepository.findByYearAndBimonthly(year, bimonthly));
+        }
+        return deaIndicators;
     }
 
 }
