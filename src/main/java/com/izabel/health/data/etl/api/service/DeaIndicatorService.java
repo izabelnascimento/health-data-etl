@@ -49,7 +49,35 @@ public class DeaIndicatorService {
         return DeaIndicatorMapper.toDeaDTOs(findIndicators(year));
     }
 
-    public List<DeaIndicatorDTO> getTopAndBottomIndicators(Long year) {
+    public List<DeaIndicatorDTO> getTopAndBottomIndicatorsDTO(Long year) {
+        return DeaIndicatorMapper.toDeaDTOs(getTopAndBottomIndicators(year));
+    }
+
+    public List<DeaIndicatorDTO> getIndicators(Long year, Long bimonthly) {
+        List<DeaIndicator> deaIndicators = deaIndicatorRepository.findByYearAndBimonthly(year, bimonthly);
+        return DeaIndicatorMapper.toDeaDTOs(deaIndicators);
+    }
+
+    @Transactional
+    public Integer calculateEfficiency() {
+        for (Long year : COMMON_YEARS) {
+            log.info("Calculating efficiency with DEA {}", year);
+            for (Long bimester : FIRST_BIMESTERS_ID) {
+                calculateEfficiency(year, bimester);
+            }
+        }
+        log.info("Finished efficiency calculation");
+        return 1;
+    }
+
+//    public List<DeaEfficiencyResultDTO> getTopAndBottomIndicatorsRedistributed(Long year) {
+//        List<DeaIndicator> real = getTopAndBottomIndicators(year);
+//        // TODO V2
+//        String content = calculateEfficiency(DeaIndicatorMapper.toDeaDTOs(real));
+//        return jsonToDeaEfficiencyDTO(content);
+//    }
+
+    private List<DeaIndicator> getTopAndBottomIndicators(Long year) {
         List<DeaIndicator> deaIndicators = findIndicators(year);
 
         Map<Long, Double> avgEfficiencyByCity = deaIndicators.stream()
@@ -74,28 +102,9 @@ public class DeaIndicatorService {
         selectedCities.addAll(bestCities);
         selectedCities.addAll(worstCities);
 
-        List<DeaIndicator> filtered = deaIndicators.stream()
+        return deaIndicators.stream()
                 .filter(d -> selectedCities.contains(d.getCity().getId()))
                 .toList();
-
-        return DeaIndicatorMapper.toDeaDTOs(filtered);
-    }
-
-    public List<DeaIndicatorDTO> getIndicators(Long year, Long bimonthly) {
-        List<DeaIndicator> deaIndicators = deaIndicatorRepository.findByYearAndBimonthly(year, bimonthly);
-        return DeaIndicatorMapper.toDeaDTOs(deaIndicators);
-    }
-
-    @Transactional
-    public Integer calculateEfficiency() {
-        for (Long year : COMMON_YEARS) {
-            log.info("Calculating efficiency with DEA {}", year);
-            for (Long bimester : FIRST_BIMESTERS_ID) {
-                calculateEfficiency(year, bimester);
-            }
-        }
-        log.info("Finished efficiency calculation");
-        return 1;
     }
 
     private void calculateEfficiency(Long year, Long bimester) {
@@ -104,6 +113,15 @@ public class DeaIndicatorService {
     }
 
     private void calculateEfficiency(List<DeaIndicatorDTO> indicators, Long year, Long bimester) {
+        try {
+            String content = calculateEfficiency(indicators);
+            updateEfficiency(year, bimester, content);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String calculateEfficiency(List<DeaIndicatorDTO> indicators) {
         try {
             String scriptPath = "src/main/resources/run_DEA.R";
 
@@ -127,19 +145,14 @@ public class DeaIndicatorService {
 
             int exitCode = process.waitFor();
             System.out.println("Finished with exit code: " + exitCode);
-
-            updateEfficiency(year, bimester, content);
-
+            return content;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     private void updateEfficiency(Long year, Long bimester, String content) throws JsonProcessingException {
-        List<DeaEfficiencyResultDTO> deaEfficiencyResultDTOS = mapper.readValue(
-                content,
-                mapper.getTypeFactory().constructCollectionType(List.class, DeaEfficiencyResultDTO.class)
-        );
+        List<DeaEfficiencyResultDTO> deaEfficiencyResultDTOS = jsonToDeaEfficiencyDTO(content);
         deaEfficiencyResultDTOS.forEach(deaEfficiencyResultDTO -> {
             DeaIndicator deaIndicator = deaIndicatorRepository.findFirstByYearAndBimonthlyAndCity_Id(
                     year, bimester, deaEfficiencyResultDTO.cityId()
@@ -147,6 +160,17 @@ public class DeaIndicatorService {
             deaIndicator.setEfficiency(deaEfficiencyResultDTO.efficiency());
             deaIndicatorRepository.save(deaIndicator);
         });
+    }
+
+    private List<DeaEfficiencyResultDTO> jsonToDeaEfficiencyDTO(String content) {
+        try {
+            return mapper.readValue(
+                    content,
+                    mapper.getTypeFactory().constructCollectionType(List.class, DeaEfficiencyResultDTO.class)
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private DeaIndicator calculate(Long year, Long bimonthly, City city, Long month) {
