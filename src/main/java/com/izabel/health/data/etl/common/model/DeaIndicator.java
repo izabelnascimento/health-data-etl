@@ -37,5 +37,8 @@ public class DeaIndicator {
     private Double apsTotalSpending;
     private Long totalHealthCareVisits;
     private Long teamsCount;
+
+    /* ===================== PRODUTO ===================== */
+    private Double efficiency;
 }
 
