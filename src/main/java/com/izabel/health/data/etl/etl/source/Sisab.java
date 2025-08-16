@@ -8,7 +8,7 @@ public abstract class Sisab {
             "https://sisab.saude.gov.br/paginas/acessoRestrito/relatorio/federal/saude/RelSauProducao.xhtml";
     public static final int TIMEOUT = 600_000;
     public static final List<String> STATES = List.of("PE");
-        public static final List<Long> YEARS = List.of(2020L, 2021L, 2022L, 2023L, 2024L);
+    public static final List<Long> YEARS = List.of(2020L, 2021L, 2022L, 2023L, 2024L);
     public static final List<Long> PRODUCTION = List.of(4L, 5L, 7L, 8L);
 
     public static List<String> getDateCodes(Long year) {

@@ -40,4 +40,6 @@ public interface HealthCareVisitRepository extends JpaRepository<HealthCareVisit
     )
     List<CityYearAggregationDTO> findAnnualSumByCity(@Param("cityId") Long cityId);
 
+    HealthCareVisit getFirstHealthCareVisitByCity_IdAndYearAndMonth(Long cityId, Long year, Long month);
+
 }

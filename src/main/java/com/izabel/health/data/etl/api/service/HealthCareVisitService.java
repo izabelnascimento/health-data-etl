@@ -8,6 +8,7 @@ import com.izabel.health.data.etl.common.loader.CityRepository;
 import com.izabel.health.data.etl.common.loader.HealthCareVisitRepository;
 import com.izabel.health.data.etl.common.mapper.CityMapper;
 import com.izabel.health.data.etl.common.model.City;
+import com.izabel.health.data.etl.common.model.HealthCareVisit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,5 +48,8 @@ public class HealthCareVisitService {
                 .collect(Collectors.toList());
     }
 
+    public HealthCareVisit getHealthCareVisit(Long cityId, Long year, Long month) {
+        return healthCareVisitRepository.getFirstHealthCareVisitByCity_IdAndYearAndMonth(cityId, year, month);
+    }
 }
 
