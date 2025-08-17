@@ -5,5 +5,7 @@ import lombok.Builder;
 @Builder
 public record DeaEfficiencyResultDTO(
         Long cityId,
+        String cityName,
+        Long bimonthly,
         Double efficiency
 ) {}

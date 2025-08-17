@@ -13,6 +13,8 @@ outputs <- cbind(
 dea_result <- dea(X = inputs, Y = outputs, RTS = "crs", ORIENTATION = "in")
 
 res <- data.frame(
+  cityName = dadosDEA$cityName,
+  bimonthly = dadosDEA$bimonthly,
   cityId = dadosDEA$cityId,
   efficiency = dea_result$eff
 )

@@ -37,7 +37,7 @@ public class DeaIndicatorService {
             log.info("Calculating data for DEA {}", year);
             for (Long bimester : ALL_BIMESTERS_ID) {
                 for (City city : cities) {
-                    deaIndicators.add(calculate(year, bimester, city, (long) (ALL_BIMESTERS_ID.indexOf(bimester) + 2)));
+                    deaIndicators.add(calculate(year, bimester, city, parseBimester(bimester)));
                 }
             }
         }
@@ -49,8 +49,8 @@ public class DeaIndicatorService {
         return DeaIndicatorMapper.toDeaDTOs(findIndicators(year));
     }
 
-    public List<DeaIndicatorDTO> getTopAndBottomIndicatorsDTO(Long year) {
-        return DeaIndicatorMapper.toDeaDTOs(getTopAndBottomIndicators(year));
+    public List<DeaIndicatorDTO> getTopAndBottomIndicatorsDTO(Long year, Long rank) {
+        return DeaIndicatorMapper.toDeaDTOs(getTopAndBottomIndicators(year, rank));
     }
 
     public List<DeaIndicatorDTO> getIndicators(Long year, Long bimonthly) {
@@ -70,16 +70,49 @@ public class DeaIndicatorService {
         return 1;
     }
 
-//    public List<DeaEfficiencyResultDTO> getTopAndBottomIndicatorsRedistributed(Long year) {
-//        List<DeaIndicator> real = getTopAndBottomIndicators(year);
-//        // TODO V2
-//        String content = calculateEfficiency(DeaIndicatorMapper.toDeaDTOs(real));
+//    public List<DeaEfficiencyResultDTO> getTopAndBottomIndicatorsRedistributed(Long year, Long rank) {
+//        List<DeaIndicator> redistributed = new ArrayList<>();
+//
+//        List<DeaIndicator> real = getTopAndBottomIndicators(year, rank)
+//                .stream()
+//                .sorted(Comparator.comparing(DeaIndicator::getEfficiency))
+//                .toList();
+//
+//        int rankInt = rank.intValue()*3;
+//        List<DeaIndicator> bottom = real.subList(0, rankInt);
+//        List<DeaIndicator> top = real.subList(rankInt, rankInt*2);
+//        double percent = 0.10;
+//
+//        for (DeaIndicator b : top) {
+//
+//            Coverage coverageTop = coverageService.getCoverage(b.getCity().getId(), year, parseBimester(b.getBimonthly()));
+//            Long teams = coverageTop.getTeams();
+//            Long teamsToMove = (long) (teams * percent);
+//            coverageTop.setTeams(teams - teamsToMove);
+//            b.setTeamsDensity(coverageTop.getTeamsDensity());
+//
+//            redistributed.add(b);
+//
+//            for (DeaIndicator t : bottom) {
+//
+//                Coverage coverageBottom = coverageService.getCoverage(t.getCity().getId(), year, parseBimester(t.getBimonthly()));
+//                coverageBottom.setTeams(coverageBottom.getTeams() + teamsToMove);
+//                t.setTeamsDensity(coverageBottom.getTeamsDensity());
+//
+//                redistributed.add(t);
+//            }
+//        }
+//
+//        String content = calculateEfficiency(DeaIndicatorMapper.toDeaDTOs(redistributed));
 //        return jsonToDeaEfficiencyDTO(content);
 //    }
 
-    private List<DeaIndicator> getTopAndBottomIndicators(Long year) {
+    private List<DeaIndicator> getTopAndBottomIndicators(Long year, Long rank) {
         List<DeaIndicator> deaIndicators = findIndicators(year);
+        return getTopAndBottomIndicators(deaIndicators, rank);
+    }
 
+    private List<DeaIndicator> getTopAndBottomIndicators(List<DeaIndicator> deaIndicators, Long rank) {
         Map<Long, Double> avgEfficiencyByCity = deaIndicators.stream()
                 .collect(Collectors.groupingBy(
                         d -> d.getCity().getId(),
@@ -88,13 +121,13 @@ public class DeaIndicatorService {
 
         List<Long> bestCities = avgEfficiencyByCity.entrySet().stream()
                 .sorted(Map.Entry.<Long, Double>comparingByValue().reversed())
-                .limit(5)
+                .limit(rank)
                 .map(Map.Entry::getKey)
                 .toList();
 
         List<Long> worstCities = avgEfficiencyByCity.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
-                .limit(5)
+                .limit(rank)
                 .map(Map.Entry::getKey)
                 .toList();
 

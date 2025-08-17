@@ -25,14 +25,16 @@ public class DeaIndicatorController {
     }
 
     @GetMapping("/indicators/first-semester/ranked")
-    public List<DeaIndicatorDTO> getFirstSemesterIndicatorsRanked(@RequestParam Long year) {
-        return deaIndicatorService.getTopAndBottomIndicatorsDTO(year);
+    public List<DeaIndicatorDTO> getFirstSemesterIndicatorsRanked(@RequestParam Long year, @RequestParam Long rank) {
+        return deaIndicatorService.getTopAndBottomIndicatorsDTO(year, rank);
     }
 
 //    TODO V2
 //    @PostMapping("/indicators/first-semester/ranked/redistributed")
-//    public List<DeaEfficiencyResultDTO> getFirstSemesterIndicatorsRankedRedistributed(@RequestParam Long year) {
-//        return deaIndicatorService.getTopAndBottomIndicatorsRedistributed(year);
+//    public List<DeaEfficiencyResultDTO> getFirstSemesterIndicatorsRankedRedistributed(
+//            @RequestParam Long year, @RequestParam Long rank
+//    ) {
+//        return deaIndicatorService.getTopAndBottomIndicatorsRedistributed(year, rank);
 //    }
 
     @GetMapping("/indicators")
