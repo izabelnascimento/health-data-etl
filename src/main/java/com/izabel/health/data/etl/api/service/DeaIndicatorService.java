@@ -174,6 +174,7 @@ public class DeaIndicatorService {
             String content = "";
             while ((line = reader.readLine()) != null) {
                 content = line;
+                System.out.println(line);
             }
 
             int exitCode = process.waitFor();
@@ -212,16 +213,16 @@ public class DeaIndicatorService {
         Coverage coverage = coverageService.getCoverage(cityId, year, month);
         HealthCareVisit healthCareVisit = healthCareVisitService.getHealthCareVisit(cityId, year, month);
 
-        double bimonthlyBudget = budget != null ? budget.getBimonthlyBudget() : 0.0;
-        long population = coverage != null ? coverage.getPopulation() : 0;
-        Long visits = healthCareVisit != null ? healthCareVisit.getVisits() : 0;
-        long teams = coverage != null ? coverage.getTeams() : 0;
+        double bimonthlyBudget = budget != null ? Optional.ofNullable(budget.getBimonthlyBudget()).orElse(0.0) : 0.0;
+        long population = coverage != null ? Optional.ofNullable(coverage.getPopulation()).orElse(0L) : 0;
+        Long visits = healthCareVisit != null ? Optional.ofNullable(healthCareVisit.getVisits()).orElse(0L) : 0;
+        long teams = coverage != null ? Optional.ofNullable(coverage.getTeams()).orElse(0L) : 0;
 
-        return DeaIndicator.builder()
+        var deaIndicator = DeaIndicator.builder()
                 .city(city)
                 .year(year)
                 .bimonthly(bimonthly)
-                .apsPerCapita(population > 0 ? bimonthlyBudget / population : 0.0)
+                .apsPerCapita(population > 0 ? bimonthlyBudget / population : 0.0) // orçamento per capita
                 .teamsDensity(coverage != null ? coverage.getTeamsDensity() : 0.0)
                 .healthCareVisitsPerThousandReais(bimonthlyBudget > 0 ? visits.doubleValue() / bimonthlyBudget * 1000 : 0.0)
                 .coveragePercent(coverage != null ? coverage.getCoveragePercent() : 0.0)
@@ -231,6 +232,8 @@ public class DeaIndicatorService {
                 .totalHealthCareVisits(visits)
                 .teamsCount(teams)
                 .build();
+
+        return deaIndicator;
     }
 
     private List<DeaIndicator> findIndicators(Long year){

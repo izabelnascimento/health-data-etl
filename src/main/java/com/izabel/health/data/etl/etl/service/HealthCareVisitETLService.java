@@ -20,7 +20,7 @@ public class HealthCareVisitETLService {
     private final HealthCareVisitTransformation transformation;
 
     public Long collectPECitiesHealthCareVisitData() throws IOException {
-        extractor.batchExtract();
+        // extractor.batchExtract();
         for (Long production: Sisab.PRODUCTION) {
             loading.saveAll(transformation.batchTransformation(production));
         }

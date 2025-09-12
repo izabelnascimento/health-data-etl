@@ -44,6 +44,12 @@ public class BudgetTransformation {
                 budget.setCapitalValue(dto.getVl_coluna10());
             }
         }
+
+        budget.setBimonthlyBudget(
+            (budget.getCurrentValue() != null ? budget.getCurrentValue() : 0.0) +
+            (budget.getCapitalValue() != null ? budget.getCapitalValue() : 0.0)
+        );
+        
         return budget;
     }
 }

@@ -1,5 +1,7 @@
-library(jsonlite)
-library(Benchmarking)
+suppressPackageStartupMessages({
+  library(jsonlite)
+  library(Benchmarking)
+})
 
 dados_bimestre <- fromJSON(file("stdin"))
 dadosDEA <- as.data.frame(dados_bimestre)
