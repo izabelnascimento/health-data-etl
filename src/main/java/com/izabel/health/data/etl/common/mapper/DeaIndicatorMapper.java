@@ -5,6 +5,7 @@ import com.izabel.health.data.etl.common.dto.DeaIndicatorDTO;
 import com.izabel.health.data.etl.common.model.DeaIndicator;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.izabel.health.data.etl.common.util.Util.parseBimester;
@@ -20,7 +21,7 @@ public class DeaIndicatorMapper {
                 .healthCareVisitsPerThousandReais(deaIndicator.getHealthCareVisitsPerThousandReais())
                 .cobertura(deaIndicator.getCoveragePercent())
                 .productivity(deaIndicator.getProductivity())
-                .efficiency(deaIndicator.getEfficiency())
+                .efficiency(Optional.ofNullable(deaIndicator.getEfficiency()).orElse(0.0))
                 .build();
     }
 
