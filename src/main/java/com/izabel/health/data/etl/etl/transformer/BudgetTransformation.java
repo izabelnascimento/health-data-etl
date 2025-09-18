@@ -7,27 +7,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
 public class BudgetTransformation {
-
-    public Budget transform(List<BudgetDTO> rawList) {
-        Budget budget = new Budget();
-        budget.setCity(City.builder().id(261160L).build());
-        budget.setState("26");
-        budget.setYear(2025L);
-        budget.setBimonthly(14L);
-
-        for (BudgetDTO dto : rawList) {
-            if ("301 - Atenção Básica - Corrente".equals(dto.getDsItem())) {
-                budget.setCurrentValue(dto.getVl_coluna10());
-            } else if ("301 - Atenção Básica - Capital".equals(dto.getDsItem())) {
-                budget.setCapitalValue(dto.getVl_coluna10());
-            }
-        }
-        return budget;
-    }
 
     public Budget transform(List<BudgetDTO> rawList, Long cityId, Long stateId, Long year, Long bimonthly) {
         Budget budget = Budget.builder()
@@ -44,6 +28,10 @@ public class BudgetTransformation {
                 budget.setCapitalValue(dto.getVl_coluna10());
             }
         }
+        budget.setBimonthlyBudget(
+                Objects.requireNonNullElse(budget.getCapitalValue(), 0.0)
+                        + Objects.requireNonNullElse(budget.getCurrentValue(), 0.0)
+        );
         return budget;
     }
 }

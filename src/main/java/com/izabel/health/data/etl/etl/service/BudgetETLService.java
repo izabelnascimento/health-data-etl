@@ -44,13 +44,6 @@ public class BudgetETLService extends Siops{
         return jsonResponse;
     }
 
-    public Budget fetchAndSaveBudget() {
-        var response = extractor.extract();
-        Budget budget = transformation.transform(response);
-
-        return loading.save(budget);
-    }
-
     public int fetchAndSaveCitiesBudget() {
         var cities = cityRepository.findAll();
         List<Budget> budgets = new ArrayList<>();

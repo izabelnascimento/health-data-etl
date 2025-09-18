@@ -12,14 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class BudgetETLController {
 
-//    TODO POR ENQUANTO É UM CONTROLLER, MAS A IDEIA É QUE SEJA UM SCHEDULER MENSAL
-
     private final BudgetETLService budgetETLService;
-
-    @PostMapping
-    public Budget collectBudgetData() {
-        return budgetETLService.fetchAndSaveBudget();
-    }
 
     @PostMapping("/collect")
     public int collectPECitiesBudgetData() {

@@ -21,14 +21,14 @@ import static com.izabel.health.data.etl.etl.source.Sisab.*;
 public class HealthCareVisitExtractor {
 
     public void batchExtract() throws IOException {
-        log.info("Iniciando extração de dados");
+        log.info("HealthCareVisit: starting extraction");
         for (Long year : YEARS) {
             log.info("Extração do ano: {}", year);
             for (Long production : PRODUCTION) {
                 extract(getDateCodes(year), production, year);
             }
         }
-        log.info("Extração de dados finalizada com sucesso");
+        log.info("HealthCareVisit: finished extraction");
     }
 
     public void extract(List<String> dateCodes, Long production, Long year) throws IOException {

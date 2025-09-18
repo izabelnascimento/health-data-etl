@@ -25,7 +25,7 @@ public class CoverageETLService extends Siops{
     private final CityRepository cityRepository;
 
     public int collectPECitiesCoverageData() {
-        log.info("Starting coverage collect");
+        log.info("Coverage: starting extraction");
         List<City> cities = cityRepository.findAll();
         int loaded = 0;
         for (City city : cities) {
@@ -34,7 +34,7 @@ public class CoverageETLService extends Siops{
             List<Coverage> transformed = transformation.transform(extract);
             loaded = loaded + loading.saveAll(transformed).size();
         }
-        log.info("Finished coverage collect");
+        log.info("Coverage: finished extraction");
         return loaded;
     }
 }
