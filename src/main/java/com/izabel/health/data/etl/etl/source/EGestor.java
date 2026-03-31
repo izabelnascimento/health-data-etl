@@ -9,5 +9,5 @@ public abstract class EGestor {
             .baseUrl("https://relatorioaps-prd.saude.gov.br")
             .build();
     public static final Long START = 202001L;
-    public static final Long END = 202412L;
+    public static final Long END = 202512L;
 }

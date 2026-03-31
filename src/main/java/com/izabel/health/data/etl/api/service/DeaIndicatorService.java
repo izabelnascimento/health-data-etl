@@ -149,7 +149,7 @@ public class DeaIndicatorService {
         try {
             String content = calculateEfficiency(indicators);
             updateEfficiency(year, bimester, content);
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -163,6 +163,19 @@ public class DeaIndicatorService {
 
             Process process = pb.start();
             String json = mapper.writeValueAsString(indicators);
+//            String json = "[\n" +
+//                    "   {\n" +
+//                    "      \"cityId\":261480,\n" +
+//                    "      \"cityName\":\"Tacaratu\",\n" +
+//                    "      \"bimonthly\":1,\n" +
+//                    "      \"apsPerCapita\":0.0,\n" +
+//                    "      \"teamsDensity\":30.644296330345515,\n" +
+//                    "      \"healthCareVisitsPerThousandReais\":0.0,\n" +
+//                    "      \"cobertura\":120.66,\n" +
+//                    "      \"productivity\":321.875,\n" +
+//                    "      \"efficiency\":0.0\n" +
+//                    "   }\n" +
+//                    "]";
 
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()))) {
                 writer.write(json);
@@ -184,7 +197,7 @@ public class DeaIndicatorService {
         }
     }
 
-    private void updateEfficiency(Long year, Long bimester, String content) throws JsonProcessingException {
+    private void updateEfficiency(Long year, Long bimester, String content) {
         List<DeaEfficiencyResultDTO> deaEfficiencyResultDTOS = jsonToDeaEfficiencyDTO(content);
         deaEfficiencyResultDTOS.forEach(deaEfficiencyResultDTO -> {
             DeaIndicator deaIndicator = deaIndicatorRepository.findFirstByYearAndBimonthlyAndCity_Id(

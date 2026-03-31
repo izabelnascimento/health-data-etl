@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Util {
-    public static final List<Long> COMMON_YEARS = List.of(2021L, 2022L, 2023L, 2024L);
+    public static final List<Long> COMMON_YEARS = List.of(2021L, 2022L, 2023L, 2024L, 2025L);
     public static final List<Long> FIRST_BIMESTERS_ID = List.of(12L, 14L, 1L);
     public static final List<Long> ALL_BIMESTERS_ID = List.of(12L, 14L, 1L, 18L, 20L, 2L);
 

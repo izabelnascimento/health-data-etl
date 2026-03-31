@@ -54,7 +54,7 @@ public class BudgetETLService extends Siops{
                 log.info("Iniciando extração de dados do bimestre: {}", bimonthly);
                 for (City city : cities) {
                     Long cityId = city.getId();
-                    var response = extractor.extract(cityId, bimonthly);
+                    var response = extractor.extract(cityId, year, bimonthly);
                     budgets.add(transformation.transform(response, cityId, 26L, year, bimonthly));
                 }
             }

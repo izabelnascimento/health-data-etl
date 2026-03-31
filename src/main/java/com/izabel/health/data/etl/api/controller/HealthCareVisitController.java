@@ -15,7 +15,7 @@ public class HealthCareVisitController {
 
     private final HealthCareVisitService healthCareVisitService;
 
-    @PostMapping("/city")
+    @GetMapping("/city")
     public List<HealthCareVisitResponseDTO> collectHealthCareVisitData(@RequestParam Long year) {
         return healthCareVisitService.getHealthCareVisitByYear(year);
     }

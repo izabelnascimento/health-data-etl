@@ -25,8 +25,8 @@ public class BudgetExtractor extends Siops {
                 .block();
     }
 
-    public List<BudgetDTO> extract(Long cityId, Long bimonthly) {
-        String uri = String.format("/despesas-por-subfuncao/%s/%s/2025/%s", PE_ID, cityId, bimonthly);
+    public List<BudgetDTO> extract(Long cityId, Long year, Long bimonthly) {
+        String uri = String.format("/despesas-por-subfuncao/%s/%s/%s/%s", PE_ID, cityId, year, bimonthly);
         return webClient.get()
                 .uri(uri)
                 .header("accept", "application/json")
